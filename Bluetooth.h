@@ -38,6 +38,14 @@
   BLEUart SerialBT;
   BLEDis  bledis;
   BLEBas  blebas;
+
+#elif MCU_VARIANT == MCU_RP2040
+  #if HAS_BLUETOOTH == true
+    #include "btstack_config.h"
+    #include "SerialBT.h"
+    BluetoothSerial SerialBT;
+  #endif
+
 #endif
 
 #define BT_PAIRING_TIMEOUT 35000
@@ -50,7 +58,7 @@ char bt_da[BT_DEV_ADDR_LEN];
 char bt_dh[BT_DEV_HASH_LEN];
 char bt_devname[11];
 
-#if MCU_VARIANT == MCU_ESP32
+#if MCU_VARIANT == MCU_ESP32 || MCU_VARIANT == MCU_RP2040
   #if HAS_BLUETOOTH == true
 
     void bt_confirm_pairing(uint32_t numVal) {

@@ -17,31 +17,36 @@
 
 #ifndef BOARDS_H
   #define BOARDS_H
+ 
+  #define PLATFORM_AVR          0x90
+  #define PLATFORM_ESP32        0x80
+  #define PLATFORM_NRF52        0x70
+  #define PLATFORM_RP2040       0x60
 
-  #define PLATFORM_AVR        0x90
-  #define PLATFORM_ESP32      0x80
-  #define PLATFORM_NRF52      0x70
+  #define MCU_1284P             0x91
+  #define MCU_2560              0x92
+  #define MCU_ESP32             0x81
+  #define MCU_NRF52             0x71
+  #define MCU_RP2040            0x61
 
-  #define MCU_1284P           0x91
-  #define MCU_2560            0x92
-  #define MCU_ESP32           0x81
-  #define MCU_NRF52           0x71
+  #define BOARD_RNODE           0x31
+  #define BOARD_HMBRW           0x32
+  #define BOARD_TBEAM           0x33
+  #define BOARD_HUZZAH32        0x34
+  #define BOARD_GENERIC_ESP32   0x35
+  #define BOARD_LORA32_V2_0     0x36
+  #define BOARD_LORA32_V2_1     0x37
+  #define BOARD_LORA32_V1_0     0x39
+  #define BOARD_HELTEC32_V2     0x38
+  #define BOARD_HELTEC32_V3     0x3A
+  #define BOARD_RNODE_NG_20     0x40
+  #define BOARD_RNODE_NG_21     0x41
+  #define BOARD_RNODE_NG_22     0x42
+  #define BOARD_GENERIC_NRF52   0x50
+  #define BOARD_RAK4630         0x51
+  #define BOARD_PICO_RP2040     0x62
+  #define BOARD_PICOW_RP2040    0x63
 
-  #define BOARD_RNODE         0x31
-  #define BOARD_HMBRW         0x32
-  #define BOARD_TBEAM         0x33
-  #define BOARD_HUZZAH32      0x34
-  #define BOARD_GENERIC_ESP32 0x35
-  #define BOARD_LORA32_V2_0   0x36
-  #define BOARD_LORA32_V2_1   0x37
-  #define BOARD_LORA32_V1_0   0x39
-  #define BOARD_HELTEC32_V2   0x38
-  #define BOARD_HELTEC32_V3   0x3A
-  #define BOARD_RNODE_NG_20   0x40
-  #define BOARD_RNODE_NG_21   0x41
-  #define BOARD_RNODE_NG_22   0x42
-  #define BOARD_GENERIC_NRF52 0x50
-  #define BOARD_RAK4630       0x51
 
   #if defined(__AVR_ATmega1284P__)
     #define PLATFORM PLATFORM_AVR
@@ -56,6 +61,9 @@
     #include <variant.h>
     #define PLATFORM PLATFORM_NRF52
     #define MCU_VARIANT MCU_NRF52
+  #elif defined(RP2040)
+    #define PLATFORM PLATFORM_RP2040
+    #define MCU_VARIANT MCU_RP2040
   #else
       #error "The firmware cannot be compiled for the selected MCU variant"
   #endif
@@ -429,6 +437,67 @@
       #error An unsupported nRF board was selected. Cannot compile RNode firmware.
     #endif
 
+  
+
+  #elif MCU_VARIANT == MCU_RP2040
+    #if BOARD_MODEL == BOARD_PICO_RP2040
+      #define HAS_CONSOLE true
+      #define HAS_EEPROM true
+      const int pin_cs = 17;
+      const int pin_reset = 20;
+      const int pin_sclk = 18;
+      const int pin_mosi = 19;
+      const int pin_miso = 16;
+
+      #if HAS_TCXO == true
+        const int pin_tcxo_enable = 21;
+      #endif
+
+      const int pin_dio = 12;
+      const int pin_busy = 13;
+      
+      // const int pin_np = 38;
+      const int pin_dac = 25;
+      const int pin_adc = 1;
+
+      // // From arduilo-pico Example
+      // const int SD_MISO = 4;
+      // const int SD_MOSI = 7;
+      // const int SD_CLK = 6;
+      // const int SD_CS = 5;
+
+
+    #elif BOARD_MODEL == BOARD_PICOW_RP2040
+      #define HAS_CONSOLE true
+      #define HAS_BLUETOOTH true
+      #define HAS_BLE true
+      #define HAS_EEPROM true
+      const int pin_cs = 17;
+      const int pin_reset = 20;
+      const int pin_sclk = 18;
+      const int pin_mosi = 19;
+      const int pin_miso = 16;
+
+      #if HAS_TCXO == true
+        const int pin_tcxo_enable = 21;
+      #endif
+
+      const int pin_dio = 12;
+      const int pin_busy = 13;
+      
+      // const int pin_np = 38;
+      const int pin_dac = 25;
+      const int pin_adc = 1;
+
+      // // From arduilo-pico Example
+      // const int SD_MISO = 4;
+      // const int SD_MOSI = 7;
+      // const int SD_CLK = 6;
+      // const int SD_CS = 5;
+
+    #else
+      #error An unsupported RP2040 board was selected. Cannot compile RNode firmware.
+    #endif
   #endif
 
   #ifndef HAS_RF_SWITCH_RX_TX
